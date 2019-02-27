@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="index">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="angular.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" href="bootstrap.css">
+
+</head>
+<body>
+<div class="container" ng-controller="HomeName">
+    <form name="f1">
+        <div class="row">
+            <label> Home</label>
+        </div>
+        <div class="row">
+            <div class="col-xs-4" >
+                <select name="City" id="s1" class="form-control" ng-model="foo"
+                        ng-change="redHome(this.selectedIndex)">
+                    <option ng-repeat="home in homeName track by $index" value="{{home}}">
+                        {{home}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <label class=""> Edit Home</label>
+        </div>
+        <form class="form-inline ">
+            <div class="input-group   row"  >
+                <input type="text" id="t1" placeholder="Enter the home name" ng-model="enter" class="btn-group form-control ">
+                <div class="input-group-append">
+                <input type="button" ng-click="entHome()" value="Save" class="btn btn-outline-secondary "  id="b1"  >
+                </div>
+            </div>
+        </form>
+    </form>
+</div>
+<script>
+
+</script>
+</body>
+</html>

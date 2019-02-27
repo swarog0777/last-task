@@ -431,16 +431,47 @@ var homes = [{
   "potential_status": "Confirmed"
 }];
 
-function gethomeName() {
+/*function gethomeName() {
   var homeName = [];
   for (var i = 0; i < homes.length; i++) {
     homeName[i] = homes[i].homeName;
   }
   console.log(homeName);
   return homeName;
-}
+}*/
 
-function searchHome(home, id) {
+var index = angular.module("index", []);
+index.controller("HomeName", function getHomeName($scope) {
+    $scope.homeName = [];
+    for (var i = 0; i < homes.length; i++) {
+        $scope.homeName[i] = homes[i].homeName;
+    }
+    console.log($scope.homeName)
+    $scope.foo = $scope.homeName[0];
+    $scope.enter=$scope.foo;
+    $scope.redHome = function (index) {
+        $scope.enter = $scope.foo;
+    }
+    $scope.entHome = function () {
+        console.log($scope.foo);
+        if ((!!$scope.enter == $scope.enter) || $scope.enter.replace(/\s/g, '') == '') {
+            document.getElementById("b1").className = "btn-danger btn";
+            //document.getElementById("t1").className = " alert-danger btn-group";
+            document.getElementById("t1").style.borderColor = '#FF0000';
+            return;
+        }
+        document.getElementById("b1").className = "btn btn-outline-secondary" ;
+        //document.getElementById("t1").className = "alert-success btn-group";
+        document.getElementById("t1").style.borderColor = '';
+        $scope.homeName[document.getElementById("s1").selectedIndex] = $scope.enter;
+        $scope.foo=$scope.homeName[document.getElementById("s1").selectedIndex];
+        console.log(document.getElementById("s1").selectedIndex);
+
+    }
+})
+
+;
+/*function searchHome(home, id) {
 
   for (var i = 0; i < home.length; i++) {
     if (home[i]._id != id) continue;
@@ -451,4 +482,4 @@ function searchHome(home, id) {
   }
   console.log(-1);
   return;
-}
+}*/
