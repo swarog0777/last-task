@@ -61,10 +61,11 @@ class register extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    closeDialog(){
-        this.setState({showModal : false});
+    closeDialog() {
+        this.setState({showModal: false});
         this.forceUpdate();
     }
+
     hashCode = function () {
         var hash = 0, i, chr;
         if (this.formData.password1.length === 0) return hash;
@@ -77,12 +78,14 @@ class register extends React.Component {
     };
 
     handleSubmit(e) {
+        e.preventDefault();
         if (this.formValid && (this.formData.password1 == this.formData.password2)) {
             localStorage.setItem('email', this.formData.email);
             localStorage.setItem('login', this.formData.login);
             localStorage.setItem('name', this.formData.name);
-            localStorage.setItem('age', this.formData.age)
-            localStorage.setItem('password', this.hashCode())
+            localStorage.setItem('age', this.formData.age);
+            localStorage.setItem('password', this.hashCode());
+            postResponse(this.formData,"/register");
         }
         else {
             this.setState({showModal: true});
@@ -97,19 +100,19 @@ class register extends React.Component {
 
     render() {
         return (
-            <form method="post" action="/register" className="container" onSubmit={this.handleSubmit}>
-                {registerFields.map( (registerField)=>
+            <form id="f1" className="container" onSubmit={this.handleSubmit}>
+                {registerFields.map((registerField) =>
                     <Inp label={registerField.label} onBlur={this.updateData.bind(this)}
                          name={registerField.name} type={registerField.type}
                          r={registerField.validateRe}/>
                 )}
 
-
-                <button type="submit" className="btn btn-primary">Войти</button>
+                <button type={"submit"} className="btn btn-primary">Принять</button>
                 {this.state.showModal &&
-                <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}} >
+                <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
                     <p>Пожалуйста проверьте введенные данные</p>
-                    <button id="close" className={" btn btn-dark "} onClick={ this.closeDialog.bind(this)}>Закрыть</button>
+                    <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
+                    </button>
                 </div>}
             </form>
         )

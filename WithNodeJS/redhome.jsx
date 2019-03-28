@@ -22,9 +22,9 @@ class Redhome extends React.Component {
                 <div className="form-inline">
                     <div className="input-group row">
                         <div className="col-xs-4">
+                            <div className="input-group-append">
                             <input type="text" id={this.props.id} placeholder="Выберите объект"
                                    className="form-control btn-group " onChange={this.changeInput}/>
-                            <div className="input-group-append">
                                 <input type="button" onClick={() => this.props.onClick(this.state.val)} value="Save"
                                        id={this.props.btn} className="btn btn-outline-secondary"/>
                             </div>

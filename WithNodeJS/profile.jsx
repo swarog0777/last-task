@@ -1,4 +1,4 @@
-const registerProfs=[
+const registerProfs = [
     {
         name: 'name',
         validateRe: /\w+/,
@@ -14,7 +14,7 @@ const registerProfs=[
     },
     {
         name: 'sex',
-        validateRe:/^[a-zA-Zа-яА-Я'][a-zA-Zа-яА-Я-' ]+[a-zA-Zа-яА-Я']?$/u,
+        validateRe: /^[a-zA-Zа-яА-Я'][a-zA-Zа-яА-Я-' ]+[a-zA-Zа-яА-Я']?$/u,
         type: 'text',
         label: 'Пол'
     },
@@ -47,10 +47,12 @@ class profile extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         //this.closeDialog=this.closeDialog().bind(this);
     }
-    closeDialog(){
-        this.setState({showModal : false});
+
+    closeDialog() {
+        this.setState({showModal: false});
         this.forceUpdate();
     }
+
     hashCode = function () {
         var hash = 0, i, chr;
         if (this.formData.password.length === 0) return hash;
@@ -63,12 +65,13 @@ class profile extends React.Component {
     };
 
     handleSubmit(e) {
-        //e.preventDefault();
+        e.preventDefault();
         if (this.formValid) {
             localStorage.setItem('sex', this.formData.sex);
             localStorage.setItem('name', this.formData.name);
             localStorage.setItem('age', this.formData.age)
-            localStorage.setItem('password', this.hashCode())
+            localStorage.setItem('password', this.hashCode());
+            postRequest(this.formData, "/profile", false);
         }
         else {
             this.setState({showModal: true});
@@ -76,28 +79,33 @@ class profile extends React.Component {
         }
     }
 
-    updateData(value, valid,name) {
+    updateData(value, valid, name) {
         this.formData[name] = value;
-        this.formValid = valid ;
+        this.formValid = valid;
     };
 
     render() {
         return (
-            <form method="post" action="/profile" className="container" onSubmit={this.handleSubmit}>
 
-                {registerProfs.map( (registerProf)=>
+            <form className={"container"}>
+
+                {registerProfs.map((registerProf) =>
 
                     <Inp label={registerProf.label} onBlur={this.updateData.bind(this)}
                          name={registerProf.name} type={registerProf.type}
                          r={registerProf.validateRe}/>
                 )}
-                <button type="submit" className="btn btn-primary">Войти</button>
-                    {this.state.showModal &&
-                    <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}} >
-                        <p>Пожалуйста проверьте введенные данные</p>
-                        <button id="close" className={" btn btn-dark "} onClick={ this.closeDialog.bind(this)}>Закрыть</button>
-                    </div>
-                    }
+                <div>
+                    <button onClick={this.handleSubmit.bind(this)} style={{marginRight: "5px"}} className="btn btn-primary">Изменить</button>
+                    <Delete/>
+                </div>
+                {this.state.showModal &&
+                <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
+                    <p>Пожалуйста проверьте введенные данные</p>
+                    <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
+                    </button>
+                </div>
+                }
             </form>
         )
 
