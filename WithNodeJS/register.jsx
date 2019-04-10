@@ -27,7 +27,7 @@ const registerFields = [
     },
     {
         name: 'name',
-        validateRe: /\w+/,
+        validateRe: /^([A-zА-я]+[,.]?[ ]?|[a-z]+['-]?)+$/,
         type: 'text',
         label: 'Имя'
 
@@ -78,6 +78,7 @@ class register extends React.Component {
     };
 
     handleSubmit(e) {
+        console.log(this.formData)
         e.preventDefault();
         if (this.formValid && (this.formData.password1 == this.formData.password2)) {
             localStorage.setItem('email', this.formData.email);
@@ -85,7 +86,7 @@ class register extends React.Component {
             localStorage.setItem('name', this.formData.name);
             localStorage.setItem('age', this.formData.age);
             localStorage.setItem('password', this.hashCode());
-            postResponse(this.formData,"/register");
+            authRequest(this.formData,"/register");
         }
         else {
             this.setState({showModal: true});
@@ -96,11 +97,12 @@ class register extends React.Component {
     updateData(value, valid, name) {
         this.formData[name] = value;
         this.formValid = valid;
+
     };
 
     render() {
         return (
-            <form id="f1" className="container" onSubmit={this.handleSubmit}>
+            <form id="f1" className="container" onSubmit={this.handleSubmit.bind(this)}>
                 {registerFields.map((registerField) =>
                     <Inp label={registerField.label} onBlur={this.updateData.bind(this)}
                          name={registerField.name} type={registerField.type}

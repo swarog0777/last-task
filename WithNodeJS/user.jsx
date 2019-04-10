@@ -1,7 +1,7 @@
 const registerProfs = [
     {
         name: 'name',
-        validateRe: /\w+/,
+        validateRe: /^([A-zА-я]+[,.]?[ ]?|[a-z]+['-]?)+$/,
         type: 'text',
         label: 'Имя'
 
@@ -12,12 +12,7 @@ const registerProfs = [
         type: 'number',
         label: 'Возраст'
     },
-    {
-        name: 'sex',
-        validateRe: /^[a-zA-Zа-яА-Я'][a-zA-Zа-яА-Я-' ]+[a-zA-Zа-яА-Я']?$/u,
-        type: 'text',
-        label: 'Пол'
-    },
+
     {
         name: 'password',
         validateRe: /(?=.*[0-9])(?=.*[a-z])[0-9a-z]{6,}/g,
@@ -45,7 +40,8 @@ class profile extends React.Component {
         this.formData = {};
         this.formValid = false;
         this.handleSubmit = this.handleSubmit.bind(this);
-        //this.closeDialog=this.closeDialog().bind(this);
+        this.updateSelect = this.updateSelect.bind(this);
+        //userAuthorizationRequest();
     }
 
     closeDialog() {
@@ -71,7 +67,7 @@ class profile extends React.Component {
             localStorage.setItem('name', this.formData.name);
             localStorage.setItem('age', this.formData.age)
             localStorage.setItem('password', this.hashCode());
-            postRequest(this.formData, "/profile", false);
+            userRequest(this.formData, "PUT");
         }
         else {
             this.setState({showModal: true});
@@ -84,7 +80,20 @@ class profile extends React.Component {
         this.formValid = valid;
     };
 
+    updateSelect(e) {
+        var val = e.target.value;
+        this.formData[e.target.name] = val;
+        if (val == "Мужской" || val == "Женский")
+            this.formValid = true;
+        else this.formValid = false
+    }
+
+    componentWillMount() {
+
+    }
+
     render() {
+        userAuthorizationRequest("user");
         return (
 
             <form className={"container"}>
@@ -95,8 +104,18 @@ class profile extends React.Component {
                          name={registerProf.name} type={registerProf.type}
                          r={registerProf.validateRe}/>
                 )}
+                <div className="form-group">
+                    <label>Пол</label>
+                    <select name={"sex"} className={"form-control "} id={"sex"}
+                            onChange={this.updateSelect.bind(this)}>
+                        <option value={"Мужской"}>Мужской</option>
+                        <option value={"Женский"}>Женский</option>
+                    </select>
+                </div>
                 <div>
-                    <button onClick={this.handleSubmit.bind(this)} style={{marginRight: "5px"}} className="btn btn-primary">Изменить</button>
+                    <button onClick={this.handleSubmit.bind(this)} style={{marginRight: "5px"}}
+                            className="btn btn-primary">Изменить
+                    </button>
                     <Delete/>
                 </div>
                 {this.state.showModal &&
@@ -104,11 +123,8 @@ class profile extends React.Component {
                     <p>Пожалуйста проверьте введенные данные</p>
                     <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
                     </button>
-                </div>
-                }
+                </div>}
             </form>
         )
-
     }
-
 }

@@ -1,4 +1,4 @@
-function postResponse(formData, page) {
+function authRequest(formData, page) {
     var param = "";
     for (var propertis in formData) {
         param += param ? ("&" + propertis + "=" + encodeURIComponent(formData[propertis])) : (propertis + "=" + encodeURIComponent(formData[propertis]));
@@ -14,38 +14,39 @@ function postResponse(formData, page) {
                     case "/register" :
                         alert("Регистрация успешна");
                         break;
-                    case "/input" :
+                    case "/login" :
                         alert("Вход успешен");
                         break
                 }
-                document.location.href = "/profile";
-            }
-            else
-                alert(obj.error);
 
+                document.location.href = "/user";
+            }
+            else {
+                alert(obj.message);
+            }
         }
     }
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(param);
 }
 
-function postRequest(formData, page, del) {
+function userRequest(formData, method) {
     var param = "";
     for (var propertis in formData) {
         param += param ? ("&" + propertis + "=" + encodeURIComponent(formData[propertis])) : (propertis + "=" + encodeURIComponent(formData[propertis]));
     }
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", page, true);
+    xhr.open(method, "/user", true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
+            var obj = JSON.parse(xhr.responseText);
+            console.log(typeof obj);
             if (xhr.status == 200) {
-                if (del)
-                    localStorage.removeItem("token");
-                switch (page) {
-                    case "/profile" :
+                switch (method) {
+                    case "PUT" :
                         alert("Данные изменены");
                         break;
-                    case "/delete" :
+                    case "DELETE" :
                         alert("Профиль удален");
                         localStorage.removeItem("token");
                         document.location.href = "/register";
@@ -53,10 +54,35 @@ function postRequest(formData, page, del) {
                 }
             }
             else
-                alert(obj.eror);
+                alert(obj.message);
         }
     }
     xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send(param);
+    if (method == "PUT")
+        xhr.send(param);
+    else xhr.send();
+}
+
+
+function userAuthorizationRequest(type) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/user", false);
+    xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send();
+    switch (type) {
+        case "route" :
+            if (xhr.status == 200)
+                return true
+            else
+                return false;
+            break;
+        case "user" :
+            if (xhr.status != 200){
+                alert("Пожалуйста авторизуйтесь");
+                document.location.href = "/login";
+            }
+            break;
+    }
 }

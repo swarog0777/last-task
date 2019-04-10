@@ -33,7 +33,7 @@ class input extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         if (this.formValid)
-        postResponse(this.formData,"/input");
+            authRequest(this.formData,"/login");
         else {
             this.setState({showModal: true});
             this.forceUpdate();
@@ -43,10 +43,9 @@ class input extends React.Component {
     updateData(value, valid, name) {
         this.formData[name] = value;
         this.formValid = valid;
-        console.log(this.formValid);
     };
 
-    render() {console.log(this.formValid);
+    render() {
         return (
             <form className="container" onSubmit={this.handleSubmit.bind(this)}>
                 {registerInps.map((registerInp) =>
@@ -63,6 +62,5 @@ class input extends React.Component {
                 </div>}
             </form>
         )
-
     }
 }

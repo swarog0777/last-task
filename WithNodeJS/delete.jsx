@@ -1,7 +1,7 @@
 class Delete extends React.Component {
 
     deleteModel() {
-        postRequest(this.formData, "/delete", true);
+        userRequest(this.formData, "DELETE");
     }
 
     render() {
