@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import  {Redirect} from "react-router-dom" ;
 import Inp from "./child";
-import {userRequest,userAuthorizationRequest} from "./requset";
+import {userRequest,userAuthorizationRequest} from "../conteiners/requset";
 import Delete from "./delete";
 
 const registerProfs = [

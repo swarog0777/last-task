@@ -2,7 +2,7 @@ import React, {Component} from "react"
 import  {Redirect} from "react-router-dom" ;
 import Selhome from "./selhome"
 import Redhome from "./redhome"
-import {gethomeName} from "./homs";
+import {gethomeName} from "../conteiners/homs";
 
 class Home extends Component {
     constructor(props) {

@@ -1,6 +1,6 @@
 import React, {Component} from "react"
 import {Redirect} from "react-router-dom" ;
-import {userRequest} from "./requset";
+import {userRequest} from "../conteiners/requset";
 
 class Delete extends Component {
     constructor(props) {

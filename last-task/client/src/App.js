@@ -1,15 +1,16 @@
 import React,{Component} from "react";
 import { BrowserRouter as Router, Route,Switch } from "react-router-dom";
-import Nav from "./nav.js";
-import Register from "./register";
-import User from "./user";
-import Login from "./Login";
-import Home from "./Home";
+import Nav from "./components/nav.js";
+import Register from "./components/register";
+import User from "./components/user";
+import Login from "./components/Login";
+import Home from "./components/Home";
+import history from "./conteiners/history";
 
 class App extends Component{
     render(){
         return(
-    <Router>
+    <Router history={history} forceRefresh={true}>
         <div>
             <Nav/>
             <Switch>

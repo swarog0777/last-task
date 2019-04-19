@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Redirect} from "react-router-dom";
-import {authRequest} from "./requset";
+import {authRequest} from "../conteiners/requset";
 import Inp from "./child"
 
 const registerFields = [
