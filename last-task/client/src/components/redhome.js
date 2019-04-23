@@ -26,7 +26,7 @@ class Redhome extends Component {
                             <div className="input-group-append">
                                 <input type="text" id={this.props.id} placeholder="Выберите объект"
                                        className="form-control btn-group " onChange={this.changeInput}/>
-                                <input type="button" onClick={() => this.props.onClick(this.state.val,this.props.id,this.props.btn)} value="Save"
+                                <input type="button" onClick={() => this.props.onClick(this.state.val, this.props.id, this.props.btn)} value="Save"
                                        id={this.props.btn} className="btn btn-outline-secondary"/>
                             </div>
                         </div>

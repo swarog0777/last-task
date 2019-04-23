@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Redirect, NavLink} from "react-router-dom";
-import {userAuthorizationRequest} from "../conteiners/requset";
+import {makeRequest, userAuthorizationRequest} from "../conteiners/requset";
 import history from "../conteiners/history";
 
 class Nav extends Component {
@@ -16,18 +16,16 @@ class Nav extends Component {
         console.log('sfsasadfa');
         localStorage.removeItem("token");
         this.setState({redirect:true});
-        //history.push('/login');
     }
 
     componentWillMount() {
-        console.log("Did Mount");
-        if (userAuthorizationRequest("route"))
+        if (makeRequest(undefined, "POST","/user","route"))
             this.setState({auth: true});
         else
             this.setState({auth: false});
     }
 
-    render() {console.log("Thats me ,Mario")
+    render() {
         return (<nav
                 className="navbar navbar-expand-lg navbar-light bg-light">
                 {this.state.redirect && <Redirect to="/login"/>}

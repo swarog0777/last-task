@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Redirect} from "react-router-dom";
-import {authRequest} from "../conteiners/requset";
+import {makeRequest} from "../conteiners/requset";
 import Inp from "./child"
 
 const registerInps = [
@@ -39,7 +39,7 @@ class Login extends Component {
     handleSubmit(e) {
         e.preventDefault();
         if (this.formValid)
-            this.setState({redirect : authRequest(this.formData,"/login")});
+            this.setState({redirect : makeRequest(this.formData, "POST","/login",undefined)});
         else {
             this.setState({showModal: true});
             this.forceUpdate();

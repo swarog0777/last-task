@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Redirect} from "react-router-dom";
-import {authRequest} from "../conteiners/requset";
+import {makeRequest} from "../conteiners/requset";
 import Inp from "./child"
 
 const registerFields = [
@@ -82,7 +82,7 @@ class Register extends Component {
             localStorage.setItem('name', this.formData.name);
             localStorage.setItem('age', this.formData.age);
             localStorage.setItem('password', this.hashCode());
-            this.setState({redirect: authRequest(this.formData, "/register")});
+            this.setState({redirect: makeRequest(this.formData, "POST","/register",undefined)});
         }
         else {
             this.setState({showModal: true});

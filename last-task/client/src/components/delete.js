@@ -1,6 +1,6 @@
 import React, {Component} from "react"
 import {Redirect} from "react-router-dom" ;
-import {userRequest} from "../conteiners/requset";
+import {makeRequest, userRequest} from "../conteiners/requset";
 
 class Delete extends Component {
     constructor(props) {
@@ -9,8 +9,7 @@ class Delete extends Component {
     }
 
     deleteModel() {
-        this.setState({redirect: userRequest(this.formData, "DELETE")});
-
+        this.setState({redirect:  makeRequest(undefined, "DELETE","/user",undefined)});
     }
 
     render() {
