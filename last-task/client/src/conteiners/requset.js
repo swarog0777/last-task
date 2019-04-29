@@ -1,57 +1,60 @@
-
-export function makeRequest(formData, method, path, type) {//auth-запрос c токеном, type-вопрос
+export function makeRequest(formData, method, path, type, successful, error) {//auth-запрос c токеном, type-вопрос
     if (type === undefined) {
         var param = "";
-        for (let propertis in formData)
+        for (let propertis in formData) {
+            if (formData[propertis] === "" )
+                continue;
             param += param ? ("&" + propertis + "=" + encodeURIComponent(formData[propertis])) : (propertis + "=" + encodeURIComponent(formData[propertis]));
+        }
     }
     var xhr = new XMLHttpRequest();
-    xhr.open(method, path, false);
+    xhr.open(method, path, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     if (path === "/user")
         xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
     if (type || (method === "DELETE"))
         xhr.send();
     else xhr.send(param);
-    if (type !== undefined){
-        switch (type) {
-            case "route" :
-                if (xhr.status === 200)
-                    return true;
-                else
-                    return false;
-            case "user" :
-                if (xhr.status !== 200) {
-                    alert("Пожалуйста авторизуйтесь");
-                    return true;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) {
+            if (type !== undefined) {
+                switch (type) {
+                    case "route" :
+                        if (xhr.status === 200)
+                            successful();
+                        else
+                            error();
+                    case "user" :
+                        if (xhr.status !== 200) {
+                            successful();
+                        }
+                        else error();
                 }
-                else return false;
-        }
-    }
-    var obj = JSON.parse(xhr.responseText);
-    if (xhr.status === 200) {
-        if (path === "/user") {
-                switch (method) {
-                    case "PUT" :
-                        alert("Данные изменены");
-                        break;
-                    case "DELETE" :
-                        alert("Профиль удален");
-                        localStorage.removeItem("token");
-                        return true;
+            }
+            else {
+                let obj = JSON.parse(xhr.responseText);
+                if (xhr.status === 200) {
+                    if (path === "/user") {
+                        switch (method) {
+                            case "PUT" :
+                                successful();
+                            case "DELETE" :
+                                localStorage.removeItem("token");
+                                successful(true);
+                        }
+                    }
+                    else {
+                        localStorage.setItem("token", obj.token);
+                        successful(true);
+                    }
                 }
+                else {
+                    error(obj.message);
+                }
+            }
         }
-        else {
-            localStorage.setItem("token", obj.token);
-            return true;
-        }
-    }
-    else {
-        alert(obj.message);
-        return false;
     }
 }
-
 
 /*
 export function userRequest(formData, method, authtype) {

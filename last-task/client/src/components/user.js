@@ -1,8 +1,11 @@
 import React, {Component} from "react"
-import  {Redirect} from "react-router-dom" ;
+import {Redirect} from "react-router-dom" ;
 import Inp from "./child";
 import {makeRequest} from "../conteiners/requset";
 import Delete from "./delete";
+import {Alert} from "react-bootstrap";
+import {Spinner} from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 
 const registerProfs = [
     {
@@ -21,7 +24,7 @@ const registerProfs = [
 
     {
         name: 'password',
-        validateRe: /(?=.*[0-9])(?=.*[a-z])[0-9a-z]{6,}/g,
+        validateRe: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
         type: 'password',
         label: 'Пароль'
     }
@@ -34,18 +37,47 @@ class User extends Component {
         super(props);
         this.state = {
             showModal: false,
-
-
+            showMessage: false,
+            message: "",
+            spiner: false
         };
         this.formData = {};
         this.formValid = {};
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateSelect = this.updateSelect.bind(this);
+        this.reqSuccess = this.reqSuccess.bind(this);
+        this.reqError = this.reqError.bind(this);
+        this.errorAuth = this.errorAuth.bind(this);
+        this.successAuth = this.successAuth.bind(this);
+        this.goToLogin = this.goToLogin.bind(this);
     }
 
     closeDialog() {
         this.setState({showModal: false});
-        this.forceUpdate();
+    }
+
+    closeMessage() {
+        this.setState({showMessage: false});
+    }
+
+    reqSuccess() {
+        this.setState({showMessage: true, message: "Данные успешно изменены"});
+    }
+
+    reqError(message) {
+        this.setState({showSpinner: false, showError: true, message: message});
+    }
+
+    successAuth() {
+        this.setState({noAuthMessage: true});
+    }
+
+    errorAuth() {
+        this.setState({auth: false});
+    }
+
+    goToLogin() {
+        this.setState({auth: true});
     }
 
     hashCode = function () {
@@ -61,41 +93,36 @@ class User extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-            localStorage.setItem('sex', this.formData.sex);
-            localStorage.setItem('name', this.formData.name);
-            localStorage.setItem('age', this.formData.age)
-            localStorage.setItem('password', this.hashCode());
-            makeRequest(this.formData, "PUT","/user",undefined)
-        /*else {
-            this.setState({showModal: true});
-            this.forceUpdate();
-        }*/
+        localStorage.setItem('sex', this.formData.sex);
+        localStorage.setItem('name', this.formData.name);
+        localStorage.setItem('age', this.formData.age);
+        localStorage.setItem('password', this.hashCode());
+        this.setState({showSpinner: true}, makeRequest(this.formData, "PUT", "/user", undefined, this.reqSuccess, this.reqError));
     }
 
     componentWillMount() {
-        if ( makeRequest(undefined, "POST","/user","user"))
-            this.setState({auth: true});
-        else
-            this.setState({auth: false});
+        makeRequest(undefined, "POST", "/user", "user", this.successAuth, this.errorAuth);
     }
 
     updateData(value, valid, name) {
         this.formData[name] = value;
-       // this.formValid[name] = valid;
     };
 
     updateSelect(e) {
         var val = e.target.value;
         this.formData[e.target.name] = val;
-       /* if (val === "Мужской" || val === "Женский")
-            this.formValid[e.target.name] = true;*/
     }
 
     render() {
         return (
-
-            <form className={"container"}>
-                { this.state.auth && <Redirect to="/login" />}
+            <div className={"container"}>
+                {this.state.showMessage &&
+                <Alert className={"p-3 mb-2 text-dark "} variant="success">
+                    <p>{this.state.message}</p>
+                    <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
+                    </button>
+                </Alert>}
+                {this.state.auth && <Redirect to="/login"/>}
                 {registerProfs.map((registerProf) =>
 
                     <Inp label={registerProf.label} onBlur={this.updateData.bind(this)}
@@ -110,9 +137,10 @@ class User extends Component {
                         <option value={"Женский"}>Женский</option>
                     </select>
                 </div>
-                <div>
+                <div className={"input-group-append"}>
                     <button onClick={this.handleSubmit.bind(this)} style={{marginRight: "5px"}}
-                            className="btn btn-primary">Изменить
+                            className="btn btn-primary" disabled={this.state.showSpinner}> {this.state.showSpinner ?
+                        <Spinner animation="border"/> : "Изменить"}
                     </button>
                     <Delete/>
                 </div>
@@ -122,7 +150,20 @@ class User extends Component {
                     <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
                     </button>
                 </div>}
-            </form>
+                <Modal show={this.state.noAuthMessage} onHide={this.goToLogin}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            Пожалуйста авторизуйтесь
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div class="col-md-3 col-centered">
+                            <button onClick={this.goToLogin} className={"btn btn-primary center-block"}>Представиться
+                            </button>
+                        </div>
+                    </Modal.Body>
+                </Modal>
+            </div>
         )
     }
 }

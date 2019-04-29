@@ -2,12 +2,14 @@ import React, {Component} from "react";
 import {Redirect} from "react-router-dom";
 import {makeRequest} from "../conteiners/requset";
 import Inp from "./child"
+import {Alert} from "react-bootstrap";
+import {Spinner} from "react-bootstrap";
 
 const registerFields = [
 
     {
         name: 'email',
-        validateRe: /^[\w\.\d-_]+@[\w\.\d-_]+\.\w{2,4}$/i,
+        validateRe: /^[0-9a-z-\.]+\@[0-9a-z-]{2,}\.[a-z]{2,}$/i,
         type: 'email',
         label: 'Электронная почта'
 
@@ -20,13 +22,13 @@ const registerFields = [
     },
     {
         name: 'password1',
-        validateRe: /(?=.*[0-9])(?=.*[a-z])[0-9a-z]{6,}/g,
+        validateRe: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
         type: 'password',
         label: 'Пароль'
     },
     {
         name: 'password2',
-        validateRe: /(?=.*[0-9])(?=.*[a-z])[0-9a-z]{6,}/g,
+        validateRe: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
         type: 'password',
         label: 'Повторите пароль'
     },
@@ -55,10 +57,17 @@ class Register extends Component {
         this.formData = {};
         this.formValid = {};
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.reqSuccess = this.reqSuccess.bind(this);
+        this.reqError = this.reqError.bind(this);
     }
 
     closeDialog() {
         this.setState({showModal: false});
+        this.forceUpdate();
+    }
+
+    closeMessage() {
+        this.setState({showError: false});
         this.forceUpdate();
     }
 
@@ -73,6 +82,14 @@ class Register extends Component {
         return hash;
     };
 
+    reqSuccess() {
+        this.setState({redirect: true})
+    }
+
+    reqError(message) {
+        this.setState({showSpinner: false, redirect: false, showError: true, message: message});
+    }
+
     handleSubmit(e) {
         console.log(this.formData)
         e.preventDefault();
@@ -82,7 +99,7 @@ class Register extends Component {
             localStorage.setItem('name', this.formData.name);
             localStorage.setItem('age', this.formData.age);
             localStorage.setItem('password', this.hashCode());
-            this.setState({redirect: makeRequest(this.formData, "POST","/register",undefined)});
+            this.setState({showSpinner: true},makeRequest(this.formData, "POST", "/register", undefined, this.reqSuccess, this.reqError))
         }
         else {
             this.setState({showModal: true});
@@ -98,15 +115,21 @@ class Register extends Component {
 
     render() {
         return (
-            <form id="f1" className="container" onSubmit={this.handleSubmit.bind(this)}>
+            <form id="f1" className="container">
+                {this.state.showError &&
+                <Alert className={"p-3 mb-2 text-dark "} variant="danger"><p>{this.state.message}</p>
+                    <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
+                    </button>
+                </Alert>}
                 {this.state.redirect && <Redirect to="/user"/>}
                 {registerFields.map((registerField) =>
                     <Inp label={registerField.label} onBlur={this.updateData.bind(this)}
                          name={registerField.name} type={registerField.type}
                          r={registerField.validateRe}/>
                 )}
-
-                <button type={"submit"} className="btn btn-primary">Принять</button>
+                <button onClick={this.handleSubmit.bind(this)} disabled={this.state.showSpinner}
+                        className="btn btn-primary">{this.state.showSpinner ?
+                    <Spinner animation="border"/> : "Создать профиль"}</button>
                 {this.state.showModal &&
                 <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
                     <p>Пожалуйста проверьте введенные данные</p>

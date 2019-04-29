@@ -10,20 +10,26 @@ class Nav extends Component {
             auth: false,
             redirect: false
         };
+        this.reqSuccess = this.reqSuccess.bind(this);
+        this.reqError = this.reqError.bind(this);
     }
 
     logOut() {
-        console.log('sfsasadfa');
         localStorage.removeItem("token");
-        this.setState({redirect:true});
+        this.setState({redirect: true});
+    }
+
+    reqSuccess(){
+        this.setState({auth : false});
+    }
+
+    reqError(){
+        this.setState({auth : true});
     }
 
     componentWillMount() {
-        if (makeRequest(undefined, "POST","/user","route"))
-            this.setState({auth: true});
-        else
-            this.setState({auth: false});
-    }
+        makeRequest(undefined, "POST", "/user", "route", this.reqSuccess, this.reqError)
+    };
 
     render() {
         return (<nav
