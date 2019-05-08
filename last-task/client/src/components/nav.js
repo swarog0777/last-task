@@ -33,7 +33,7 @@ class Nav extends Component {
 
     render() {
         return (<nav
-                className="navbar navbar-expand-lg navbar-light bg-light">
+                className="navbar navbar-expand-lg navbar-light bg-light" >
                 {this.state.redirect && <Redirect to="/login"/>}
                 {!this.state.auth &&
                 < NavLink

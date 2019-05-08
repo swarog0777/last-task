@@ -31,7 +31,6 @@ const registerProfs = [
 
 ];
 
-
 class User extends Component {
     constructor(props) {
         super(props);
@@ -61,7 +60,7 @@ class User extends Component {
     }
 
     reqSuccess() {
-        this.setState({showMessage: true, message: "Данные успешно изменены"});
+        this.setState({showSpinner: false, showMessage: true, message: "Данные успешно изменены"});
     }
 
     reqError(message) {
@@ -115,54 +114,62 @@ class User extends Component {
 
     render() {
         return (
-            <div className={"container"}>
-                {this.state.showMessage &&
-                <Alert className={"p-3 mb-2 text-dark "} variant="success">
-                    <p>{this.state.message}</p>
-                    <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
-                    </button>
-                </Alert>}
-                {this.state.auth && <Redirect to="/login"/>}
-                {registerProfs.map((registerProf) =>
+            <div className="root">
+                <div className="logo">
+                    <div className="filter"/>
+                    <h1 className="text_logo">Пользователь</h1>
+                </div>
+                <div className="container container_root">
+                    {this.state.showMessage &&
+                    <Alert className={"p-3 mb-2 text-dark "} variant="success">
+                        <p>{this.state.message}</p>
+                        <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
+                        </button>
+                    </Alert>}
+                    {this.state.auth && <Redirect to="/login"/>}
+                    {registerProfs.map((registerProf) =>
 
-                    <Inp label={registerProf.label} onBlur={this.updateData.bind(this)}
-                         name={registerProf.name} type={registerProf.type}
-                         r={registerProf.validateRe}/>
-                )}
-                <div className="form-group">
-                    <label>Пол</label>
-                    <select name={"sex"} className={"form-control "} id={"sex"}
-                            onChange={this.updateSelect.bind(this)}>
-                        <option value={"Мужской"}>Мужской</option>
-                        <option value={"Женский"}>Женский</option>
-                    </select>
+                        <Inp label={registerProf.label} onBlur={this.updateData.bind(this)}
+                             name={registerProf.name} type={registerProf.type}
+                             r={registerProf.validateRe}/>
+                    )}
+                    <div className="input-group-append">
+                        <label style={{opacity: "0.5"}}
+                               className="form-control border-top-0 border-right-0 border-left-0 border-bottom-0 col-lg-2">Пол</label>
+                        <select name={"sex"} className={"form-control col-lg-10"} id={"sex"}
+                                onChange={this.updateSelect.bind(this)}>
+                            <option value={"Мужской"}>Мужской</option>
+                            <option value={"Женский"}>Женский</option>
+                        </select>
+                    </div>
+                    <div className={"input-group-append"}>
+                        <button onClick={this.handleSubmit.bind(this)} style={{marginRight: "5px"}}
+                                className="btn btn-primary" disabled={this.state.showSpinner}> {this.state.showSpinner ?
+                            <Spinner animation="border"/> : "Изменить"}
+                        </button>
+                        <Delete/>
+                    </div>
+                    {this.state.showModal &&
+                    <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
+                        <p>Пожалуйста проверьте введенные данные</p>
+                        <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
+                        </button>
+                    </div>}
+                    <Modal show={this.state.noAuthMessage} onHide={this.goToLogin}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>
+                                Пожалуйста авторизуйтесь
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <div class="col-md-3 col-centered">
+                                <button onClick={this.goToLogin}
+                                        className={"btn btn-primary center-block"}>Представиться
+                                </button>
+                            </div>
+                        </Modal.Body>
+                    </Modal>
                 </div>
-                <div className={"input-group-append"}>
-                    <button onClick={this.handleSubmit.bind(this)} style={{marginRight: "5px"}}
-                            className="btn btn-primary" disabled={this.state.showSpinner}> {this.state.showSpinner ?
-                        <Spinner animation="border"/> : "Изменить"}
-                    </button>
-                    <Delete/>
-                </div>
-                {this.state.showModal &&
-                <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
-                    <p>Пожалуйста проверьте введенные данные</p>
-                    <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
-                    </button>
-                </div>}
-                <Modal show={this.state.noAuthMessage} onHide={this.goToLogin}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>
-                            Пожалуйста авторизуйтесь
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div class="col-md-3 col-centered">
-                            <button onClick={this.goToLogin} className={"btn btn-primary center-block"}>Представиться
-                            </button>
-                        </div>
-                    </Modal.Body>
-                </Modal>
             </div>
         )
     }

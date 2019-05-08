@@ -11,7 +11,7 @@ const registerFields = [
         name: 'email',
         validateRe: /^[0-9a-z-\.]+\@[0-9a-z-]{2,}\.[a-z]{2,}$/i,
         type: 'email',
-        label: 'Электронная почта'
+        label: 'Email'
 
     },
     {
@@ -77,7 +77,7 @@ class Register extends Component {
         for (i = 0; i < this.formData.password1.length; i++) {
             chr = this.formData.password1.charCodeAt(i);
             hash = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32bit integer
+            hash |= 0;
         }
         return hash;
     };
@@ -99,7 +99,7 @@ class Register extends Component {
             localStorage.setItem('name', this.formData.name);
             localStorage.setItem('age', this.formData.age);
             localStorage.setItem('password', this.hashCode());
-            this.setState({showSpinner: true},makeRequest(this.formData, "POST", "/register", undefined, this.reqSuccess, this.reqError))
+            this.setState({showSpinner: true}, makeRequest(this.formData, "POST", "/register", undefined, this.reqSuccess, this.reqError))
         }
         else {
             this.setState({showModal: true});
@@ -115,29 +115,35 @@ class Register extends Component {
 
     render() {
         return (
-            <form id="f1" className="container">
-                {this.state.showError &&
-                <Alert className={"p-3 mb-2 text-dark "} variant="danger"><p>{this.state.message}</p>
-                    <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
-                    </button>
-                </Alert>}
-                {this.state.redirect && <Redirect to="/user"/>}
-                {registerFields.map((registerField) =>
-                    <Inp label={registerField.label} onBlur={this.updateData.bind(this)}
-                         name={registerField.name} type={registerField.type}
-                         r={registerField.validateRe}/>
-                )}
-                <button onClick={this.handleSubmit.bind(this)} disabled={this.state.showSpinner}
-                        className="btn btn-primary">{this.state.showSpinner ?
-                    <Spinner animation="border"/> : "Создать профиль"}</button>
-                {this.state.showModal &&
-                <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
-                    <p>Пожалуйста проверьте введенные данные</p>
-                    <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
-                    </button>
-                </div>}
-
-            </form>
+            <div id="f1" className="root">
+                <div className="logo">
+                    <div className="filter"/>
+                    <h1 className="text_logo">Регистрация</h1>
+                </div>
+                <div className="container container_root">
+                    {this.state.showError &&
+                    <Alert className={"p-3 mb-2 text-dark "} variant="danger"><p>{this.state.message}</p>
+                        <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
+                        </button>
+                    </Alert>}
+                    {this.state.redirect && <Redirect to="/user"/>}
+                    {registerFields.map((registerField) =>
+                        <Inp label={registerField.label} onBlur={this.updateData.bind(this)}
+                             name={registerField.name} type={registerField.type}
+                             r={registerField.validateRe}/>
+                    )}
+                    <button onClick={this.handleSubmit.bind(this)} disabled={this.state.showSpinner}
+                            style={{borderRadius: "21px", width: "165px", backgroundColor: "#49b651", color: "white"}}
+                            className="root_button btn ">{this.state.showSpinner ?
+                        <Spinner animation="border"/> : "Создать профиль"}</button>
+                    {this.state.showModal &&
+                    <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
+                        <p>Пожалуйста проверьте введенные данные</p>
+                        <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
+                        </button>
+                    </div>}
+                </div>
+            </div>
         )
 
     }
