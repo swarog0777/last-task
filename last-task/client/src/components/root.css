@@ -16,6 +16,9 @@
     height: 182px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
 
 }
@@ -36,7 +39,7 @@
     color: White;
     position: absolute;
     top: 50%;
-    left: 265px;
+    max-width: 50%;
     line-height: 0;
 }
 
@@ -57,4 +60,8 @@
 
 .message_report {
     background-color: #f6f7fd;
+}
+
+.homeRed{
+    margin-bottom: 8px;
 }

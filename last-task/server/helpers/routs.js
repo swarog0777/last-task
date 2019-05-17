@@ -10,9 +10,8 @@ module.exports = function (app) {
     app.post("/register", auth.register, token.create);
     app.post("/login", auth.login, token.create);
 
-    app.post("/user", token.check, function (req, res) {
-        m.scb("Sucessful", res);
-    });
+    app.post("/user", token.check,user.infoUser);
+
     app.put("/user", token.check, user.editUser);
     app.delete("/user", token.check, user.delete);
 }

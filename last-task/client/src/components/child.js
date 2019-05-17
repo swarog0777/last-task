@@ -13,12 +13,26 @@ class Inp extends Component {
     updateData(e) {
         var val = e.target.value;
         var valid = this.validate(val);
-        this.setState({value: val, valid})
+        this.setState({value: val, valid});
     }
 
     validate(val) {
         var r = this.props.r;
-        return (r.test(val));
+       switch (this.props.name) {
+           case ("age"):
+               return (r.test(val)&& (val<150)&&(val>3));
+           default: return r.test(val);
+       }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.value !== prevProps.value) {
+            if (this.props.value) {
+                var val = this.props.value;
+                var valid = this.validate(val);
+                this.setState({value: val, valid})
+            }
+        }
     }
 
     render() {

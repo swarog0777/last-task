@@ -36,12 +36,8 @@ class Login extends Component {
         this.formValid = false;
         this.reqSuccess = this.reqSuccess.bind(this);
         this.reqError = this.reqError.bind(this);
+        this.closeMessage = this.closeMessage.bind(this);
 
-    }
-
-    closeDialog() {
-        this.setState({showModal: false});
-        this.forceUpdate();
     }
 
     closeMessage() {
@@ -55,16 +51,12 @@ class Login extends Component {
 
     reqError(message) {
         this.setState({showSpinner: false, redirect: false, showError: true, message: message});
+       setTimeout(this.closeMessage, 5000)
     }
 
     handleSubmit(e) {
         e.preventDefault();
-        if (this.formValid)
             this.setState({showSpinner: true}, makeRequest(this.formData, "POST", "/login", undefined, this.reqSuccess, this.reqError))
-        else {
-            this.setState({showModal: true});
-            this.forceUpdate();
-        }
     }
 
     updateData(value, valid, name) {
@@ -74,15 +66,8 @@ class Login extends Component {
 
     /* todo componentWillUnmount(){
         this.props.refreshNav();
-         <img src={sign_in}
-                         style={{
-                             width: "100%",
-                             height: "182px",
-                             borderTopLeftRadius: "10px",
-                             borderTopRightRadius: "10px",
-                             filter: "brightness(40%)"
-                         }}
-                         className="img-responsive"/>
+         <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
+                        </button>
     }*/
 
     render() {
@@ -93,11 +78,6 @@ class Login extends Component {
                     <h1 className="text_logo">SIGN IN</h1>
                 </div>
                 <div className="container container_root">
-                    {this.state.showError &&
-                    <Alert className={"p-3 mb-2 text-dark "} variant="danger"><p>{this.state.message}</p>
-                        <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
-                        </button>
-                    </Alert>}
                     {this.state.redirect && <Redirect to="/user"/>}
                     <div className="form-group">
                         {registerInps.map((registerInp) =>
@@ -116,12 +96,9 @@ class Login extends Component {
                                 className="  btn root_button">{this.state.showSpinner ?
                             <Spinner animation="border"/> : "Войти"}</button>
                     </div>
-                    {this.state.showModal &&
-                    <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
-                        <p>Пожалуйста проверьте введенные данные</p>
-                        <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
-                        </button>
-                    </div>}
+                    {this.state.showError &&
+                    <Alert className={"p-3 mb-2 text-dark "} variant="danger"><p>{this.state.message}</p>
+                    </Alert>}
                 </div>
             </div>
         )

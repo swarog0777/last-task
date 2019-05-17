@@ -46,8 +46,12 @@ class Delete extends Component {
         return (
             <div>
                 {this.state.redirect && !(this.state.showMessage) && <Redirect to="/login"/>}
-                <button className="btn btn-primary " onClick={this.handleShow}>Удалить
-                    профиль
+                <button className="btn" style={{
+                    borderRadius: "21px",
+                    width: "104px",
+                    backgroundColor: "#49b651",
+                    color: "white"
+                }} onClick={this.handleShow}>Удалить
                 </button>
                 {<Modal show={this.state.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
@@ -56,8 +60,10 @@ class Delete extends Component {
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        <div className="btn-group float-right">
                         <button onClick={this.handleClose} className="btn btn-secondary">Отмена</button>
-                        <button onClick={this.deleteModel} className="btn btn-primary">Да,абсолютно уверен</button>
+                        <button onClick={this.deleteModel} className="btn btn-primary ml-1 ">Да,абсолютно уверен</button>
+                        </div>
                     </Modal.Body>
                 </Modal>}
                 {<Modal show={this.state.showMessage} onHide={this.messageClose}>

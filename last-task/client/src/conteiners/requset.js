@@ -28,7 +28,10 @@ export function makeRequest(formData, method, path, type, successful, error) {//
                         if (xhr.status !== 200) {
                             successful();
                         }
-                        else error();
+                        else {
+                            let obj = JSON.parse(xhr.responseText);
+                            error(obj.user);
+                }
                 }
             }
             else {
@@ -38,6 +41,7 @@ export function makeRequest(formData, method, path, type, successful, error) {//
                         switch (method) {
                             case "PUT" :
                                 successful();
+                                break;
                             case "DELETE" :
                                 localStorage.removeItem("token");
                                 successful(true);

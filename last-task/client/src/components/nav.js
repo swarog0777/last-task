@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {Redirect, NavLink} from "react-router-dom";
 import {makeRequest, userAuthorizationRequest} from "../conteiners/requset";
-import history from "../conteiners/history";
 
 class Nav extends Component {
     constructor(props) {
@@ -19,12 +18,12 @@ class Nav extends Component {
         this.setState({redirect: true});
     }
 
-    reqSuccess(){
-        this.setState({auth : false});
+    reqSuccess() {
+        this.setState({auth: false});
     }
 
-    reqError(){
-        this.setState({auth : true});
+    reqError() {
+        this.setState({auth: true});
     }
 
     componentWillMount() {
@@ -33,31 +32,37 @@ class Nav extends Component {
 
     render() {
         return (<nav
-                className="navbar navbar-expand-lg navbar-light bg-light" >
+                className="navbar navbar-expand-lg navbar-light  " style={{backgroundColor: "#7eb699"}}>
                 {this.state.redirect && <Redirect to="/login"/>}
                 {!this.state.auth &&
                 < NavLink
-                    className={"nav-item nav-link"}
-                    exact
+                    className={"nav-item "}
+                    exact activeStyle={{color:"black"}}
                     to={"/register"}> Новый
                     профиль </NavLink>}
                 {this.state.auth &&
                 < NavLink
                     className={"nav-item nav-link"}
-                    to={"/user"}> Редактирование
+                    to={"/user"} activeStyle={{color:"black"}}> Редактирование
                     профиля </NavLink>}
 
                 {!this.state.auth && < NavLink
-                    className={"nav-item nav-link"}
+                    className={"nav-item nav-link"} activeStyle={{color:"black"}}
                     to={"/login"}> Вход </NavLink>}
 
                 {this.state.auth && < NavLink
-                    className={"nav-item nav-link"}
+                    className={"nav-item nav-link"} activeStyle={{color:"black"}}
                     to={"/home"}> Дома </NavLink>}
 
                 {this.state.auth &&
                 < button
-                    className={"nav-item nav-link btn btn-primary"}
+                    className={"nav-item nav-link btn"}
+                    style={{
+                        borderRadius: "21px",
+                        width: "104px",
+                        backgroundColor: "#49b651",
+                        color: "white"
+                    }}
                     onClick={this.logOut.bind(this)
                     }>
                     Выйти </button>}

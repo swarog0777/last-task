@@ -12,23 +12,25 @@ const registerProfs = [
         name: 'name',
         validateRe: /^([A-zА-я]+[,.]?[ ]?|[a-z]+['-]?)+$/,
         type: 'text',
-        label: 'Имя'
+        label: 'Имя',
+        value: ''
 
     },
     {
         name: 'age',
         validateRe: /^\d+$/,
         type: 'number',
-        label: 'Возраст'
+        label: 'Возраст',
+        value: ''
     },
 
     {
         name: 'password',
         validateRe: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
         type: 'password',
-        label: 'Пароль'
+        label: 'Пароль',
+        value: ''
     }
-
 ];
 
 class User extends Component {
@@ -49,6 +51,8 @@ class User extends Component {
         this.errorAuth = this.errorAuth.bind(this);
         this.successAuth = this.successAuth.bind(this);
         this.goToLogin = this.goToLogin.bind(this);
+        this.closeMessage = this.closeMessage.bind(this);
+        this.updateSelect= this.updateSelect.bind(this)
     }
 
     closeDialog() {
@@ -60,19 +64,26 @@ class User extends Component {
     }
 
     reqSuccess() {
-        this.setState({showSpinner: false, showMessage: true, message: "Данные успешно изменены"});
+        this.setState({showSpinner: false, showMessage: true,variantMessage : "success" ,message: "Данные успешно изменены"});
+        setTimeout(this.closeMessage, 5000)
     }
 
     reqError(message) {
-        this.setState({showSpinner: false, showError: true, message: message});
+        this.setState({showSpinner: false, showMessage: true, variantMessage : "danger" ,message: message});
+        setTimeout(this.closeMessage, 5000)
     }
 
     successAuth() {
         this.setState({noAuthMessage: true});
     }
 
-    errorAuth() {
-        this.setState({auth: false});
+    errorAuth(user) {
+        user.age = (user.age == 'undefined') ? '' : user.age;
+        user.name = (user.name == 'undefined') ? '' : user.name;
+        user.sex = (user.sex == 'undefined') ? '' : user.sex;
+        registerProfs[1].value = user.age;
+        registerProfs[0].value = user.name;
+        this.setState({auth: false, age: user.age, name: user.name, sex:user.sex});
     }
 
     goToLogin() {
@@ -80,15 +91,19 @@ class User extends Component {
     }
 
     hashCode = function () {
-        var hash = 0, i, chr;
-        if (this.formData.password.length === 0) return hash;
-        for (i = 0; i < this.formData.password.length; i++) {
-            chr = this.formData.password.charCodeAt(i);
-            hash = ((hash << 5) - hash) + chr;
-            hash |= 0;
+        if (this.formData.password) {
+            var hash = 0, i, chr;
+            if (this.formData.password.length === 0) return hash;
+            for (i = 0; i < this.formData.password.length; i++) {
+                chr = this.formData.password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + chr;
+                hash |= 0;
+            }
+            return hash;
         }
-        return hash;
-    };
+        else
+            return '';
+    }
 
     handleSubmit(e) {
         e.preventDefault();
@@ -110,6 +125,8 @@ class User extends Component {
     updateSelect(e) {
         var val = e.target.value;
         this.formData[e.target.name] = val;
+        this.setState ({sex:val})
+
     }
 
     render() {
@@ -117,37 +134,40 @@ class User extends Component {
             <div className="root">
                 <div className="logo">
                     <div className="filter"/>
-                    <h1 className="text_logo">Пользователь</h1>
+                    <h1 className="text_logo">PROFILE</h1>
                 </div>
                 <div className="container container_root">
-                    {this.state.showMessage &&
-                    <Alert className={"p-3 mb-2 text-dark "} variant="success">
-                        <p>{this.state.message}</p>
-                        <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
-                        </button>
-                    </Alert>}
                     {this.state.auth && <Redirect to="/login"/>}
-                    {registerProfs.map((registerProf) =>
-
-                        <Inp label={registerProf.label} onBlur={this.updateData.bind(this)}
-                             name={registerProf.name} type={registerProf.type}
-                             r={registerProf.validateRe}/>
-                    )}
-                    <div className="input-group-append">
-                        <label style={{opacity: "0.5"}}
-                               className="form-control border-top-0 border-right-0 border-left-0 border-bottom-0 col-lg-2">Пол</label>
-                        <select name={"sex"} className={"form-control col-lg-10"} id={"sex"}
-                                onChange={this.updateSelect.bind(this)}>
-                            <option value={"Мужской"}>Мужской</option>
-                            <option value={"Женский"}>Женский</option>
-                        </select>
-                    </div>
-                    <div className={"input-group-append"}>
-                        <button onClick={this.handleSubmit.bind(this)} style={{marginRight: "5px"}}
-                                className="btn btn-primary" disabled={this.state.showSpinner}> {this.state.showSpinner ?
-                            <Spinner animation="border"/> : "Изменить"}
-                        </button>
-                        <Delete/>
+                    <div className="form-group">
+                        {registerProfs.map((registerProf) =>
+                            <Inp label={registerProf.label} onBlur={this.updateData.bind(this)}
+                                 name={registerProf.name} type={registerProf.type}
+                                 value={registerProf.value}
+                                     r={registerProf.validateRe}/>
+                        )}
+                        <div className="input-group-append">
+                            <label style={{opacity: "0.5"}}
+                                   className="form-control border-top-0 border-right-0 border-left-0 border-bottom-0 col-lg-2">Пол</label>
+                            <select name={"sex"} className={"form-control col-lg-10"} id={"sex"} value={this.state.sex}
+                                    onChange={this.updateSelect.bind(this)}>
+                                <option value="" selected disabled hidden> </option>
+                                <option value={"Мужской"}>Мужской</option>
+                                <option value={"Женский"}>Женский</option>
+                            </select>
+                        </div>
+                        <div className={"input-group-append"} style={{marginLeft : "105px"}}>
+                            <button onClick={this.handleSubmit.bind(this)} style={{
+                                borderRadius: "21px",
+                                width: "104px",
+                                backgroundColor: "#49b651",
+                                color: "white",
+                                marginRight: "5px"
+                            }}
+                                    className="btn" disabled={this.state.showSpinner}> {this.state.showSpinner ?
+                                <Spinner animation="border"/> : "Изменить"}
+                            </button>
+                            <Delete/>
+                        </div>
                     </div>
                     {this.state.showModal &&
                     <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
@@ -155,6 +175,10 @@ class User extends Component {
                         <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
                         </button>
                     </div>}
+                    {this.state.showMessage &&
+                    <Alert className={"p-3 mb-2 text-dark "} variant={this.state.variantMessage}>
+                        <p>{this.state.message}</p>
+                    </Alert>}
                     <Modal show={this.state.noAuthMessage} onHide={this.goToLogin}>
                         <Modal.Header closeButton>
                             <Modal.Title>
@@ -162,9 +186,9 @@ class User extends Component {
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <div class="col-md-3 col-centered">
+                            <div class="col-centered">
                                 <button onClick={this.goToLogin}
-                                        className={"btn btn-primary center-block"}>Представиться
+                                        className={"btn btn-primary center-block float-right"}>Представиться
                                 </button>
                             </div>
                         </Modal.Body>

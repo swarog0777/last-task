@@ -16,26 +16,17 @@ class Redhome extends Component {
 
     render() {
         return (
-            <div>
-                <div className="row">
-                    <label className=""> {this.props.label} </label>
-                </div>
-                <div className="form-inline">
-                    <div className="input-group row">
-                        <div className="col-xs-4">
-                            <div className="input-group-append">
+            <div className="homeRed input-group-append">
+                    <label className="form-control border-top-0 border-right-0 border-left-0 border-bottom-0 col-lg-2" style={{opacity: "0.5"}}> {this.props.label} </label>
+                            <div className="input-group-append col-xs-4 form-inline">
                                 <input type="text" id={this.props.id} placeholder="Выберите объект"
                                        className="form-control btn-group " onChange={this.changeInput}/>
                                 <input type="button" onClick={() => this.props.onClick(this.state.val, this.props.id, this.props.btn)} value="Save"
                                        id={this.props.btn} className="btn btn-outline-secondary"/>
                             </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         )
     }
-
 }
 
 export default Redhome;

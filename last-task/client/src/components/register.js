@@ -59,11 +59,12 @@ class Register extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.reqSuccess = this.reqSuccess.bind(this);
         this.reqError = this.reqError.bind(this);
+        this.closeMessage = this.closeMessage.bind(this);
+        this.closeDialog = this.closeDialog.bind(this);
     }
 
     closeDialog() {
         this.setState({showModal: false});
-        this.forceUpdate();
     }
 
     closeMessage() {
@@ -88,23 +89,19 @@ class Register extends Component {
 
     reqError(message) {
         this.setState({showSpinner: false, redirect: false, showError: true, message: message});
+        console.log(message);
+        setTimeout(this.closeMessage, 5000)
     }
 
     handleSubmit(e) {
-        console.log(this.formData)
         e.preventDefault();
-        if (this.formValid && (this.formData.password1 === this.formData.password2)) {
             localStorage.setItem('email', this.formData.email);
             localStorage.setItem('login', this.formData.login);
             localStorage.setItem('name', this.formData.name);
             localStorage.setItem('age', this.formData.age);
             localStorage.setItem('password', this.hashCode());
             this.setState({showSpinner: true}, makeRequest(this.formData, "POST", "/register", undefined, this.reqSuccess, this.reqError))
-        }
-        else {
-            this.setState({showModal: true});
-            this.forceUpdate();
-        }
+
     }
 
     updateData(value, valid, name) {
@@ -118,14 +115,9 @@ class Register extends Component {
             <div id="f1" className="root">
                 <div className="logo">
                     <div className="filter"/>
-                    <h1 className="text_logo">Регистрация</h1>
+                    <h1 className="text_logo">CHECK IN</h1>
                 </div>
                 <div className="container container_root">
-                    {this.state.showError &&
-                    <Alert className={"p-3 mb-2 text-dark "} variant="danger"><p>{this.state.message}</p>
-                        <button id="close" className={" btn btn-dark "} onClick={this.closeMessage.bind(this)}>Закрыть
-                        </button>
-                    </Alert>}
                     {this.state.redirect && <Redirect to="/user"/>}
                     {registerFields.map((registerField) =>
                         <Inp label={registerField.label} onBlur={this.updateData.bind(this)}
@@ -136,12 +128,9 @@ class Register extends Component {
                             style={{borderRadius: "21px", width: "165px", backgroundColor: "#49b651", color: "white"}}
                             className="root_button btn ">{this.state.showSpinner ?
                         <Spinner animation="border"/> : "Создать профиль"}</button>
-                    {this.state.showModal &&
-                    <div className={"p-3 mb-2 text-dark "} style={{backgroundColor: "#f6f7fd"}}>
-                        <p>Пожалуйста проверьте введенные данные</p>
-                        <button id="close" className={" btn btn-dark "} onClick={this.closeDialog.bind(this)}>Закрыть
-                        </button>
-                    </div>}
+                    {this.state.showError &&
+                    <Alert style={{marginTop : "15px"}} className={"p-3 mb-2 text-dark "} variant="danger"><p>{this.state.message}</p>
+                    </Alert>}
                 </div>
             </div>
         )
